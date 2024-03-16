@@ -1,0 +1,53 @@
+{
+  "moduleName": "joshua_notes",
+  "tables": [
+    {
+      "name": "note",
+      "dartName": "Note",
+      "module": "joshua_notes",
+      "schema": "public",
+      "columns": [
+        {
+          "name": "id",
+          "columnType": 2,
+          "isNullable": false,
+          "columnDefault": "nextval('note_id_seq'::regclass)",
+          "dartType": "int?"
+        },
+        {
+          "name": "text",
+          "columnType": 0,
+          "isNullable": false,
+          "dartType": "String"
+        }
+      ],
+      "foreignKeys": [],
+      "indexes": [
+        {
+          "indexName": "note_pkey",
+          "elements": [
+            {
+              "type": 0,
+              "definition": "id"
+            }
+          ],
+          "type": "btree",
+          "isUnique": true,
+          "isPrimary": true
+        }
+      ],
+      "managed": true
+    }
+  ],
+  "installedModules": [
+    {
+      "module": "serverpod",
+      "version": "20240115074235544"
+    },
+    {
+      "module": "joshua_notes",
+      "version": "20240315232002933"
+    }
+  ],
+  "migrationApiVersion": 1
+}
