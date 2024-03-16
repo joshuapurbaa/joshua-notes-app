@@ -1,9 +1,13 @@
+// ignore: use_build_context_synchronously
 import 'package:flutter/material.dart';
+import 'package:joshua_notes_client/joshua_notes_client.dart';
 import 'package:joshua_notes_flutter/controllers/note_provider/note_provider.dart';
+import 'package:joshua_notes_flutter/core/utils/app_snackbar.dart';
 import 'package:provider/provider.dart';
 
 class CreateNotePage extends StatefulWidget {
-  const CreateNotePage({super.key});
+  const CreateNotePage({super.key, this.note});
+  final Note? note;
 
   @override
   State<CreateNotePage> createState() => _CreateNotePageState();
@@ -12,23 +16,60 @@ class CreateNotePage extends StatefulWidget {
 class _CreateNotePageState extends State<CreateNotePage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
-  Future<void> _createNote() async {
+
+  bool isUpdate = false;
+
+  String updateOrCreateNote() {
+    return isUpdate ? 'Update' : 'Create';
+  }
+
+  @override
+  initState() {
+    super.initState();
+    if (widget.note != null) {
+      setState(() {
+        isUpdate = true;
+      });
+      _titleController.text = widget.note!.title;
+      _contentController.text = widget.note!.content;
+    }
+  }
+
+  Future<void> _submitNote() async {
     final prov = context.read<NoteProvider>();
     try {
-      final res = await prov.createNote(
-        title: _titleController.text,
-        content: _contentController.text,
-      );
-
-      if (res) {
-        const ScaffoldMessenger(
-          child: SnackBar(
-            content: Text('Note created'),
-          ),
+      if (isUpdate) {
+        final res = await prov.updateNote(
+          title: _titleController.text,
+          content: _contentController.text,
         );
+
+        if (res) {
+          appSnackBar(
+            context: context,
+            message: 'Note updated',
+            isError: false,
+          );
+        }
+      } else {
+        final res = await prov.createNote(
+          title: _titleController.text,
+          content: _contentController.text,
+        );
+        if (res) {
+          appSnackBar(
+            context: context,
+            message: 'Note created',
+            isError: false,
+          );
+        }
       }
     } catch (e) {
-      print('Error creating note: $e');
+      appSnackBar(
+        context: context,
+        message: 'Failed to create or update note: $e',
+        isError: true,
+      );
     }
   }
 
@@ -45,47 +86,57 @@ class _CreateNotePageState extends State<CreateNotePage> {
       canPop: true,
       onPopInvoked: (didPop) {
         if (didPop) {
-          print('Popped :: CreateNotePage');
           final prov = context.read<NoteProvider>();
           prov.getNotes();
         }
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Create Note'),
+          title: Text('${updateOrCreateNote()} Note'),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.check),
+              onPressed: () {
+                if (_titleController.text.isEmpty ||
+                    _contentController.text.isEmpty) {
+                  appSnackBar(
+                    context: context,
+                    message: 'Title and content cannot be empty',
+                    isError: true,
+                  );
+                } else {
+                  _submitNote();
+                }
+              },
+            ),
+          ],
         ),
         body: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
               Text(
-                'Create a new note',
+                '${updateOrCreateNote()} a ${isUpdate ? '' : 'new'} note',
                 style: Theme.of(context).textTheme.displayMedium,
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               TextField(
                 controller: _titleController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Title',
                   border: OutlineInputBorder(),
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               TextField(
                 controller: _contentController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Content',
                   border: OutlineInputBorder(),
                 ),
                 maxLines: 10,
               ),
-              SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: () {
-                  _createNote();
-                },
-                child: const Text('Create Note'),
-              ),
+              const SizedBox(height: 10),
             ],
           ),
         ),

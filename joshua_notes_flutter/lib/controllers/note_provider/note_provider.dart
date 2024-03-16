@@ -22,7 +22,6 @@ class NoteProvider extends ChangeNotifier {
       _getAllNotesState = GetAllNotesState.loaded;
       notifyListeners();
     } catch (e) {
-      print('Error getting notes: $e');
       _getAllNotesState = GetAllNotesState.error;
       notifyListeners();
     }
@@ -44,7 +43,40 @@ class NoteProvider extends ChangeNotifier {
 
       return true;
     } catch (e) {
-      print('Error creating note: $e');
+      return false;
+    }
+  }
+
+  Future<bool> updateNote({
+    required String title,
+    required String content,
+  }) async {
+    Note note = Note(
+      title: title,
+      content: content,
+    );
+
+    try {
+      await client.notes.updateNote(
+        note,
+      );
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> deleteNote({
+    required int id,
+  }) async {
+    try {
+      await client.notes.deleteNote(
+        id,
+      );
+
+      return true;
+    } catch (e) {
       return false;
     }
   }

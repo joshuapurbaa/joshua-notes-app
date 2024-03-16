@@ -13,8 +13,11 @@ class NotesEndpoint extends Endpoint {
     );
   }
 
-  Future<void> deleteNote(Session session, Note note) async {
-    await Note.db.deleteRow(session, note);
+  Future<void> deleteNote(Session session, int id) async {
+    await Note.db.deleteWhere(
+      session,
+      where: (t) => t.id.equals(id),
+    );
   }
 
   Future<void> updateNote(Session session, Note note) async {

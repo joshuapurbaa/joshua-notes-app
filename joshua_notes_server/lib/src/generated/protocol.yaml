@@ -2,3 +2,4 @@ notes:
   - createNote:
   - getNotes:
   - deleteNote:
+  - updateNote:

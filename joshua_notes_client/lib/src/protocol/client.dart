@@ -33,9 +33,15 @@ class EndpointNotes extends _i1.EndpointRef {
         {},
       );
 
-  _i2.Future<void> deleteNote(_i3.Note note) => caller.callServerEndpoint<void>(
+  _i2.Future<void> deleteNote(int id) => caller.callServerEndpoint<void>(
         'notes',
         'deleteNote',
+        {'id': id},
+      );
+
+  _i2.Future<void> updateNote(_i3.Note note) => caller.callServerEndpoint<void>(
+        'notes',
+        'updateNote',
         {'note': note},
       );
 }
