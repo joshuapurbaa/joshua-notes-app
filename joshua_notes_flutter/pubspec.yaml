@@ -25,6 +25,8 @@ dependencies:
   flutter:
     sdk: flutter
   serverpod_flutter: 1.2.5
+  serverpod_auth_email_flutter: 1.2.5
+  serverpod_auth_shared_flutter: 1.2.5
   joshua_notes_client:
     path: ../joshua_notes_client
 
