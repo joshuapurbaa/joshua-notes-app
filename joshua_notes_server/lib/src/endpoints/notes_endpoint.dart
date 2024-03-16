@@ -16,4 +16,8 @@ class NotesEndpoint extends Endpoint {
   Future<void> deleteNote(Session session, Note note) async {
     await Note.db.deleteRow(session, note);
   }
+
+  Future<void> updateNote(Session session, Note note) async {
+    await Note.db.updateRow(session, note);
+  }
 }
