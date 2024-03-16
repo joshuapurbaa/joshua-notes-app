@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:joshua_notes_client/joshua_notes_client.dart';
 import 'package:joshua_notes_flutter/controllers/note_provider/note_provider.dart';
+import 'package:joshua_notes_flutter/core/app_route.dart';
 import 'package:joshua_notes_flutter/core/constants/rooutes.dart';
 import 'package:joshua_notes_flutter/core/utils/app_snackbar.dart';
 import 'package:provider/provider.dart';
@@ -15,6 +18,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    _getData();
   }
 
   void _getData() {
@@ -26,7 +30,7 @@ class _HomePageState extends State<HomePage> {
   Future<void> _getAllNotes() async {
     final noteProv = context.read<NoteProvider>();
     try {
-      noteProv.getNotes();
+      await noteProv.getNotes();
     } catch (e) {
       appSnackBar(
         context: context,
@@ -55,6 +59,98 @@ class _HomePageState extends State<HomePage> {
       appSnackBar(
         context: context,
         message: 'Gagal menghapus note',
+        isError: true,
+      );
+    }
+  }
+
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController contentController = TextEditingController();
+
+  @override
+  void dispose() {
+    titleController.dispose();
+    contentController.dispose();
+  }
+
+  void _showEditNoteDialog({required Note note}) async {
+    final noteProv = context.read<NoteProvider>();
+
+    String prevTitle = note.title;
+    String prevContent = note.content;
+
+    titleController.text = note.title;
+    contentController.text = note.content;
+
+    final result = await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Edit Note'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: titleController,
+                decoration: const InputDecoration(
+                  labelText: 'Title',
+                ),
+              ),
+              TextField(
+                controller: contentController,
+                decoration: const InputDecoration(
+                  labelText: 'Content',
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                if (prevTitle == titleController.text &&
+                    prevContent == contentController.text) {
+                  Navigator.pop(context, false);
+                  return;
+                }
+
+                final res = await noteProv.updateNote(
+                  id: note.id!,
+                  title: titleController.text,
+                  content: contentController.text,
+                );
+
+                if (res) {
+                  Navigator.pop(context, true);
+                } else {
+                  Navigator.pop(context);
+                }
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (result == true) {
+      _getData();
+      appSnackBar(
+        context: context,
+        message: 'Berhasil mengubah note',
+        isError: false,
+      );
+    } else if (result == false) {
+      return;
+    } else {
+      appSnackBar(
+        context: context,
+        message: 'Gagal mengubah note',
         isError: true,
       );
     }
@@ -91,7 +187,7 @@ class _HomePageState extends State<HomePage> {
                         itemBuilder: (context, index) {
                           final note = noteProv.notes[index];
                           return Container(
-                            padding: EdgeInsets.all(10),
+                            padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
                               border: Border.all(
                                 color: Colors.grey,
@@ -115,10 +211,8 @@ class _HomePageState extends State<HomePage> {
                                     IconButton(
                                       icon: const Icon(Icons.edit),
                                       onPressed: () {
-                                        Navigator.pushNamed(
-                                          context,
-                                          AppRoutes.createNote,
-                                          arguments: note,
+                                        _showEditNoteDialog(
+                                          note: note,
                                         );
                                       },
                                     ),
@@ -148,12 +242,14 @@ class _HomePageState extends State<HomePage> {
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(
-                  context,
-                  AppRoutes.createNote,
-                  arguments: null,
+              onPressed: () async {
+                final result = await context.pushNamed(
+                  Routes.createNotePage.name,
                 );
+
+                if (result == true) {
+                  _getData();
+                }
               },
               child: const Text('Add Note'),
             ),

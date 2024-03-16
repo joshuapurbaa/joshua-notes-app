@@ -1,13 +1,13 @@
 // ignore: use_build_context_synchronously
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:joshua_notes_client/joshua_notes_client.dart';
 import 'package:joshua_notes_flutter/controllers/note_provider/note_provider.dart';
 import 'package:joshua_notes_flutter/core/utils/app_snackbar.dart';
 import 'package:provider/provider.dart';
 
 class CreateNotePage extends StatefulWidget {
-  const CreateNotePage({super.key, this.note});
-  final Note? note;
+  const CreateNotePage({super.key});
 
   @override
   State<CreateNotePage> createState() => _CreateNotePageState();
@@ -17,57 +17,26 @@ class _CreateNotePageState extends State<CreateNotePage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
 
-  bool isUpdate = false;
-
-  String updateOrCreateNote() {
-    return isUpdate ? 'Update' : 'Create';
-  }
-
-  @override
-  initState() {
-    super.initState();
-    if (widget.note != null) {
-      setState(() {
-        isUpdate = true;
-      });
-      _titleController.text = widget.note!.title;
-      _contentController.text = widget.note!.content;
-    }
-  }
-
   Future<void> _submitNote() async {
     final prov = context.read<NoteProvider>();
     try {
-      if (isUpdate) {
-        final res = await prov.updateNote(
-          title: _titleController.text,
-          content: _contentController.text,
+      final res = await prov.createNote(
+        title: _titleController.text,
+        content: _contentController.text,
+      );
+      if (res) {
+        appSnackBar(
+          context: context,
+          message: 'Note created',
+          isError: false,
         );
 
-        if (res) {
-          appSnackBar(
-            context: context,
-            message: 'Note updated',
-            isError: false,
-          );
-        }
-      } else {
-        final res = await prov.createNote(
-          title: _titleController.text,
-          content: _contentController.text,
-        );
-        if (res) {
-          appSnackBar(
-            context: context,
-            message: 'Note created',
-            isError: false,
-          );
-        }
+        context.pop(true);
       }
     } catch (e) {
       appSnackBar(
         context: context,
-        message: 'Failed to create or update note: $e',
+        message: 'Failed to create note: $e',
         isError: true,
       );
     }
@@ -92,7 +61,7 @@ class _CreateNotePageState extends State<CreateNotePage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text('${updateOrCreateNote()} Note'),
+          title: const Text('Create Note'),
           actions: [
             IconButton(
               icon: const Icon(Icons.check),
@@ -116,7 +85,7 @@ class _CreateNotePageState extends State<CreateNotePage> {
           child: Column(
             children: [
               Text(
-                '${updateOrCreateNote()} a ${isUpdate ? '' : 'new'} note',
+                'Create new note',
                 style: Theme.of(context).textTheme.displayMedium,
               ),
               const SizedBox(height: 10),

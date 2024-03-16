@@ -48,10 +48,12 @@ class NoteProvider extends ChangeNotifier {
   }
 
   Future<bool> updateNote({
+    required int id,
     required String title,
     required String content,
   }) async {
     Note note = Note(
+      id: id,
       title: title,
       content: content,
     );

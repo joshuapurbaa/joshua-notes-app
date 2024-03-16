@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:joshua_notes_flutter/controllers/note_provider/note_provider.dart';
+import 'package:joshua_notes_flutter/core/app_route.dart';
 import 'package:joshua_notes_flutter/core/constants/rooutes.dart';
 import 'package:joshua_notes_flutter/views/create_note/create_note_page.dart';
 import 'package:joshua_notes_flutter/views/home/home_page.dart';
@@ -21,15 +22,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Joshua Notes',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      routes: {
-        AppRoutes.home: (context) => const HomePage(),
-        AppRoutes.createNote: (context) => const CreateNotePage(),
-      },
+      routerConfig: AppRoute.router,
     );
   }
 }
