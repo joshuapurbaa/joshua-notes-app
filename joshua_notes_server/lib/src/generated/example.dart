@@ -11,38 +11,70 @@
 import 'package:serverpod/serverpod.dart' as _i1;
 
 abstract class Notes extends _i1.SerializableEntity {
-  Notes._({required this.text});
+  Notes._({
+    required this.title,
+    required this.content,
+  });
 
-  factory Notes({required String text}) = _NotesImpl;
+  factory Notes({
+    required String title,
+    required String content,
+  }) = _NotesImpl;
 
   factory Notes.fromJson(
     Map<String, dynamic> jsonSerialization,
     _i1.SerializationManager serializationManager,
   ) {
     return Notes(
-        text: serializationManager
-            .deserialize<String>(jsonSerialization['text']));
+      title:
+          serializationManager.deserialize<String>(jsonSerialization['title']),
+      content: serializationManager
+          .deserialize<String>(jsonSerialization['content']),
+    );
   }
 
-  String text;
+  String title;
 
-  Notes copyWith({String? text});
+  String content;
+
+  Notes copyWith({
+    String? title,
+    String? content,
+  });
   @override
   Map<String, dynamic> toJson() {
-    return {'text': text};
+    return {
+      'title': title,
+      'content': content,
+    };
   }
 
   @override
   Map<String, dynamic> allToJson() {
-    return {'text': text};
+    return {
+      'title': title,
+      'content': content,
+    };
   }
 }
 
 class _NotesImpl extends Notes {
-  _NotesImpl({required String text}) : super._(text: text);
+  _NotesImpl({
+    required String title,
+    required String content,
+  }) : super._(
+          title: title,
+          content: content,
+        );
 
   @override
-  Notes copyWith({String? text}) {
-    return Notes(text: text ?? this.text);
+  Notes copyWith({
+    String? title,
+    String? content,
+  }) {
+    return Notes(
+      title: title ?? this.title,
+      content: content ?? this.content,
+    );
   }
 }

@@ -13,12 +13,14 @@ import 'package:serverpod_client/serverpod_client.dart' as _i1;
 abstract class Note extends _i1.SerializableEntity {
   Note._({
     this.id,
-    required this.text,
+    required this.title,
+    required this.content,
   });
 
   factory Note({
     int? id,
-    required String text,
+    required String title,
+    required String content,
   }) = _NoteImpl;
 
   factory Note.fromJson(
@@ -27,7 +29,10 @@ abstract class Note extends _i1.SerializableEntity {
   ) {
     return Note(
       id: serializationManager.deserialize<int?>(jsonSerialization['id']),
-      text: serializationManager.deserialize<String>(jsonSerialization['text']),
+      title:
+          serializationManager.deserialize<String>(jsonSerialization['title']),
+      content: serializationManager
+          .deserialize<String>(jsonSerialization['content']),
     );
   }
 
@@ -36,17 +41,21 @@ abstract class Note extends _i1.SerializableEntity {
   /// the id will be null.
   int? id;
 
-  String text;
+  String title;
+
+  String content;
 
   Note copyWith({
     int? id,
-    String? text,
+    String? title,
+    String? content,
   });
   @override
   Map<String, dynamic> toJson() {
     return {
       if (id != null) 'id': id,
-      'text': text,
+      'title': title,
+      'content': content,
     };
   }
 }
@@ -56,20 +65,24 @@ class _Undefined {}
 class _NoteImpl extends Note {
   _NoteImpl({
     int? id,
-    required String text,
+    required String title,
+    required String content,
   }) : super._(
           id: id,
-          text: text,
+          title: title,
+          content: content,
         );
 
   @override
   Note copyWith({
     Object? id = _Undefined,
-    String? text,
+    String? title,
+    String? content,
   }) {
     return Note(
       id: id is int? ? id : this.id,
-      text: text ?? this.text,
+      title: title ?? this.title,
+      content: content ?? this.content,
     );
   }
 }

@@ -13,12 +13,14 @@ import 'package:serverpod/serverpod.dart' as _i1;
 abstract class Note extends _i1.TableRow {
   Note._({
     int? id,
-    required this.text,
+    required this.title,
+    required this.content,
   }) : super(id);
 
   factory Note({
     int? id,
-    required String text,
+    required String title,
+    required String content,
   }) = _NoteImpl;
 
   factory Note.fromJson(
@@ -27,7 +29,10 @@ abstract class Note extends _i1.TableRow {
   ) {
     return Note(
       id: serializationManager.deserialize<int?>(jsonSerialization['id']),
-      text: serializationManager.deserialize<String>(jsonSerialization['text']),
+      title:
+          serializationManager.deserialize<String>(jsonSerialization['title']),
+      content: serializationManager
+          .deserialize<String>(jsonSerialization['content']),
     );
   }
 
@@ -35,20 +40,24 @@ abstract class Note extends _i1.TableRow {
 
   static const db = NoteRepository._();
 
-  String text;
+  String title;
+
+  String content;
 
   @override
   _i1.Table get table => t;
 
   Note copyWith({
     int? id,
-    String? text,
+    String? title,
+    String? content,
   });
   @override
   Map<String, dynamic> toJson() {
     return {
       if (id != null) 'id': id,
-      'text': text,
+      'title': title,
+      'content': content,
     };
   }
 
@@ -57,7 +66,8 @@ abstract class Note extends _i1.TableRow {
   Map<String, dynamic> toJsonForDatabase() {
     return {
       'id': id,
-      'text': text,
+      'title': title,
+      'content': content,
     };
   }
 
@@ -65,7 +75,8 @@ abstract class Note extends _i1.TableRow {
   Map<String, dynamic> allToJson() {
     return {
       if (id != null) 'id': id,
-      'text': text,
+      'title': title,
+      'content': content,
     };
   }
 
@@ -79,8 +90,11 @@ abstract class Note extends _i1.TableRow {
       case 'id':
         id = value;
         return;
-      case 'text':
-        text = value;
+      case 'title':
+        title = value;
+        return;
+      case 'content':
+        content = value;
         return;
       default:
         throw UnimplementedError();
@@ -234,38 +248,49 @@ class _Undefined {}
 class _NoteImpl extends Note {
   _NoteImpl({
     int? id,
-    required String text,
+    required String title,
+    required String content,
   }) : super._(
           id: id,
-          text: text,
+          title: title,
+          content: content,
         );
 
   @override
   Note copyWith({
     Object? id = _Undefined,
-    String? text,
+    String? title,
+    String? content,
   }) {
     return Note(
       id: id is int? ? id : this.id,
-      text: text ?? this.text,
+      title: title ?? this.title,
+      content: content ?? this.content,
     );
   }
 }
 
 class NoteTable extends _i1.Table {
   NoteTable({super.tableRelation}) : super(tableName: 'note') {
-    text = _i1.ColumnString(
-      'text',
+    title = _i1.ColumnString(
+      'title',
+      this,
+    );
+    content = _i1.ColumnString(
+      'content',
       this,
     );
   }
 
-  late final _i1.ColumnString text;
+  late final _i1.ColumnString title;
+
+  late final _i1.ColumnString content;
 
   @override
   List<_i1.Column> get columns => [
         id,
-        text,
+        title,
+        content,
       ];
 }
 

@@ -1,4 +1,5 @@
 class: Note
 table: note
 fields:
-  text: String
+  title: String
+  content: String

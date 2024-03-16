@@ -40,7 +40,13 @@ class Protocol extends _i1.SerializationManagerServer {
           columnDefault: 'nextval(\'note_id_seq\'::regclass)',
         ),
         _i2.ColumnDefinition(
-          name: 'text',
+          name: 'title',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'content',
           columnType: _i2.ColumnType.text,
           isNullable: false,
           dartType: 'String',
