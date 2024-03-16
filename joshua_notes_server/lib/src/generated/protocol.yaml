@@ -1,1 +1,4 @@
 notes:
+  - createNote:
+  - getNotes:
+  - deleteNote:

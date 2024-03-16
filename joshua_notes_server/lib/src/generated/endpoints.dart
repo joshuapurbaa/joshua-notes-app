@@ -10,6 +10,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
 import '../endpoints/notes_endpoint.dart' as _i2;
+import 'package:joshua_notes_server/src/generated/note.dart' as _i3;
 
 class Endpoints extends _i1.EndpointDispatch {
   @override
@@ -25,7 +26,53 @@ class Endpoints extends _i1.EndpointDispatch {
     connectors['notes'] = _i1.EndpointConnector(
       name: 'notes',
       endpoint: endpoints['notes']!,
-      methodConnectors: {},
+      methodConnectors: {
+        'createNote': _i1.MethodConnector(
+          name: 'createNote',
+          params: {
+            'note': _i1.ParameterDescription(
+              name: 'note',
+              type: _i1.getType<_i3.Note>(),
+              nullable: false,
+            )
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['notes'] as _i2.NotesEndpoint).createNote(
+            session,
+            params['note'],
+          ),
+        ),
+        'getNotes': _i1.MethodConnector(
+          name: 'getNotes',
+          params: {},
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['notes'] as _i2.NotesEndpoint).getNotes(session),
+        ),
+        'deleteNote': _i1.MethodConnector(
+          name: 'deleteNote',
+          params: {
+            'note': _i1.ParameterDescription(
+              name: 'note',
+              type: _i1.getType<_i3.Note>(),
+              nullable: false,
+            )
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['notes'] as _i2.NotesEndpoint).deleteNote(
+            session,
+            params['note'],
+          ),
+        ),
+      },
     );
   }
 }

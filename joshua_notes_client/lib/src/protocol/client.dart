@@ -9,7 +9,9 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
-import 'protocol.dart' as _i2;
+import 'dart:async' as _i2;
+import 'package:joshua_notes_client/src/protocol/note.dart' as _i3;
+import 'protocol.dart' as _i4;
 
 /// {@category Endpoint}
 class EndpointNotes extends _i1.EndpointRef {
@@ -17,6 +19,25 @@ class EndpointNotes extends _i1.EndpointRef {
 
   @override
   String get name => 'notes';
+
+  _i2.Future<void> createNote(_i3.Note note) => caller.callServerEndpoint<void>(
+        'notes',
+        'createNote',
+        {'note': note},
+      );
+
+  _i2.Future<List<_i3.Note>> getNotes() =>
+      caller.callServerEndpoint<List<_i3.Note>>(
+        'notes',
+        'getNotes',
+        {},
+      );
+
+  _i2.Future<void> deleteNote(_i3.Note note) => caller.callServerEndpoint<void>(
+        'notes',
+        'deleteNote',
+        {'note': note},
+      );
 }
 
 class Client extends _i1.ServerpodClient {
@@ -28,7 +49,7 @@ class Client extends _i1.ServerpodClient {
     Duration? connectionTimeout,
   }) : super(
           host,
-          _i2.Protocol(),
+          _i4.Protocol(),
           securityContext: securityContext,
           authenticationKeyManager: authenticationKeyManager,
           streamingConnectionTimeout: streamingConnectionTimeout,
